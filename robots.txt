@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://teda-youth.github.io/TESO-ELITES_DEVELOPMENT-ASSOCIATION-/sitemap.xml
