@@ -116,11 +116,20 @@ function wireProgressForm(formId, btnId, fillId, labelId, emailFieldId, duration
     }
   }
 
-  function showError() {
+  function showError(reason) {
     btn.classList.remove('running');
     btn.classList.add('error');
     fill.style.background = '#c0392b';
     label.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Failed, tap to retry`;
+
+    // TEMP DEBUG: surface the real reason from Web3Forms so it's visible
+    // on mobile without needing dev tools. Remove this block once forms
+    // are confirmed working.
+    if (notify && notifyText && reason) {
+      notifyText.textContent = 'Error: ' + reason;
+      notify.classList.add('show');
+      setTimeout(() => notify.classList.remove('show'), 8000);
+    }
 
     // Allow the person to try again rather than being stuck
     setTimeout(() => {
@@ -155,14 +164,17 @@ function wireProgressForm(formId, btnId, fillId, labelId, emailFieldId, duration
         body: formData,
       })
         .then((res) => res.json())
-        .then((result) => !!(result && result.success))
-        .catch(() => false);
+        .then((result) => ({
+          success: !!(result && result.success),
+          message: result && result.message,
+        }))
+        .catch((err) => ({ success: false, message: 'Network error: ' + err.message }));
 
-      Promise.all([animationDone, submitDone]).then(([, success]) => {
-        if (success) {
+      Promise.all([animationDone, submitDone]).then(([, result]) => {
+        if (result.success) {
           showSuccess();
         } else {
-          showError();
+          showError(result.message);
         }
       });
     }
