@@ -2,11 +2,12 @@
    TEDA, forms.js
    Reusable progress-bar submit behavior for every form on the
    site (join, apply, contact, youth forum register, volunteer,
-   partner). Handles: an invisible reCAPTCHA v3 check, an actual
-   submission to Web3Forms, an animated fill and live percentage
-   while sending, masked email in the confirmation notification,
-   and an auto-dismissing toast. Shows a clear error state (and
-   allows retrying) if the real submission fails.
+   partner). Handles: an actual submission to Web3Forms (with a
+   honeypot field for basic spam protection), an animated fill
+   and live percentage while sending, masked email in the
+   confirmation notification, and an auto-dismissing toast.
+   Shows a clear error state (and allows retrying) if the real
+   submission fails.
 
    Durations used across the site (per the confirmed plan):
      join.html            20000 ms
@@ -17,24 +18,7 @@
      get-involved (both)  15000 ms
    ============================================================ */
 
-const TEDA_RECAPTCHA_SITE_KEY = '6Ldtn08tAAAAAI_9OE4Pc7pGF3XGrKhzuLBLEvqs';
 const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
-
-/**
- * Get a reCAPTCHA v3 token for the given action, or resolve with
- * null if reCAPTCHA isn't available for some reason (script blocked,
- * offline, etc.) so the form still degrades gracefully.
- */
-function getRecaptchaToken(action) {
-  if (typeof grecaptcha === 'undefined') {
-    return Promise.resolve(null);
-  }
-  return new Promise((resolve) => {
-    grecaptcha.ready(() => {
-      grecaptcha.execute(TEDA_RECAPTCHA_SITE_KEY, { action }).then(resolve).catch(() => resolve(null));
-    });
-  });
-}
 
 /**
  * Mask an email address as to*****ke@gmail.com style.
@@ -63,10 +47,8 @@ function maskEmail(email) {
  *                              runs alongside the real network request)
  * @param {string} doneText     label text shown once complete (e.g. "Sent")
  * @param {string} sendingText  label text shown while filling (e.g. "Sending...")
- * @param {string|null} recaptchaFieldId  id of the hidden input that should
- *                              receive the reCAPTCHA token (pass null to skip)
  */
-function wireProgressForm(formId, btnId, fillId, labelId, emailFieldId, durationMs, doneText, sendingText, recaptchaFieldId) {
+function wireProgressForm(formId, btnId, fillId, labelId, emailFieldId, durationMs, doneText, sendingText) {
   const form = document.getElementById(formId);
   if (!form) return;
 
@@ -122,15 +104,6 @@ function wireProgressForm(formId, btnId, fillId, labelId, emailFieldId, duration
     fill.style.background = '#c0392b';
     label.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Failed, tap to retry`;
 
-    // TEMP DEBUG: surface the real reason from Web3Forms so it's visible
-    // on mobile without needing dev tools. Remove this block once forms
-    // are confirmed working.
-    if (notify && notifyText && reason) {
-      notifyText.textContent = 'Error: ' + reason;
-      notify.classList.add('show');
-      setTimeout(() => notify.classList.remove('show'), 8000);
-    }
-
     // Allow the person to try again rather than being stuck
     setTimeout(() => {
       btn.classList.remove('error');
@@ -149,12 +122,7 @@ function wireProgressForm(formId, btnId, fillId, labelId, emailFieldId, duration
     const honeypot = form.querySelector('input[name="botcheck"]');
     if (honeypot && honeypot.checked) return;
 
-    function proceedWithSubmit(token) {
-      if (recaptchaFieldId) {
-        const tokenField = document.getElementById(recaptchaFieldId);
-        if (tokenField) tokenField.value = token || '';
-      }
-
+    function proceedWithSubmit() {
       const formData = new FormData(form);
 
       const animationDone = runProgressAnimation();
@@ -179,10 +147,6 @@ function wireProgressForm(formId, btnId, fillId, labelId, emailFieldId, duration
       });
     }
 
-    if (recaptchaFieldId) {
-      getRecaptchaToken(formId).then(proceedWithSubmit);
-    } else {
-      proceedWithSubmit(null);
-    }
+    proceedWithSubmit();
   });
 }
