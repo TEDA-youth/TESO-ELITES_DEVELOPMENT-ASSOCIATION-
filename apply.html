@@ -6,8 +6,8 @@
 <title>Apply for a Position, TEDA</title>
 <meta name="description" content="Apply for a leadership or field position within TEDA.">
 <meta property="og:title" content="Apply for a Position, TEDA">
-<meta property="og:image" content="https://teda-youth.github.io/TESO-ELITES_DEVELOPMENT-ASSOCIATION-/assets/images/og-image.jpg">
-<meta property="og:url" content="https://teda-youth.github.io/TESO-ELITES_DEVELOPMENT-ASSOCIATION-/apply.html">
+<meta property="og:image" content="https://www.tedauganda.org/assets/images/og-image.jpg">
+<meta property="og:url" content="https://www.tedauganda.org/apply.html">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#7B1F1F">
 <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
@@ -16,13 +16,12 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="TEDA">
-<link rel="canonical" href="https://teda-youth.github.io/TESO-ELITES_DEVELOPMENT-ASSOCIATION-/apply.html">
+<link rel="canonical" href="https://www.tedauganda.org/apply.html">
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="assets/css/style.css">
-<script src="https://www.google.com/recaptcha/api.js?render=6Ldtn08tAAAAAI_9OE4Pc7pGF3XGrKhzuLBLEvqs" defer></script>
 
 </head>
 <body>
@@ -85,7 +84,6 @@
       <input type="hidden" name="subject" value="New TEDA Position Application">
       <input type="hidden" name="from_name" value="TEDA Website, Apply Form">
       <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off">
-      <input type="hidden" name="g-recaptcha-response" id="applyRecaptcha">
       <div class="form-group full" style="margin-bottom:16px;"><label>Position Applying For</label>
         <input type="text" name="position" id="posInput" readonly placeholder="Select a position above" style="background:var(--off-white);cursor:pointer;" required></div>
       <div class="form-row">
@@ -172,7 +170,7 @@
       document.getElementById('posInput').value = card.dataset.pos;
     });
   });
-  wireProgressForm('applyForm','applyBtn','applyFill','applyLabel','applyEmail', 15000, 'Sent', 'Sending...','applyRecaptcha');
+  wireProgressForm('applyForm','applyBtn','applyFill','applyLabel','applyEmail', 15000, 'Sent', 'Sending...');
 </script>
 </body>
 </html>
